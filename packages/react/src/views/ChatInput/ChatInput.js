@@ -449,21 +449,59 @@ const ChatInput = ({ scrollToBottom }) => {
           sendMessage();
         }
         break;
-      case e.altKey && (e.code === 'ArrowUp' || 'ArrowRight'): {
+      case (e.ctrlKey || e.altKey) && e.code === 'ArrowLeft': {
         e.preventDefault();
-        e.stopPropagation();
         if (messageRef && messageRef.current) {
+          const { value, selectionStart } = messageRef.current;
+          let newPosition = selectionStart;
+          
+          // Find the start of the previous word
+          while (newPosition > 0 && /\s/.test(value[newPosition - 1])) {
+            newPosition--;
+          }
+          while (newPosition > 0 && !/\s/.test(value[newPosition - 1])) {
+            newPosition--;
+          }
+          
+          messageRef.current.setSelectionRange(newPosition, newPosition);
+          messageRef.current.focus();
+        }
+        break;
+      }
+      case (e.ctrlKey || e.altKey) && e.code === 'ArrowRight': {
+        e.preventDefault();
+        if (messageRef && messageRef.current) {
+          const { value, selectionEnd } = messageRef.current;
+          let newPosition = selectionEnd;
+          
+          // Find the end of the next word
+          while (newPosition < value.length && /\s/.test(value[newPosition])) {
+            newPosition++;
+          }
+          while (newPosition < value.length && !/\s/.test(value[newPosition])) {
+            newPosition++;
+          }
+          
+          messageRef.current.setSelectionRange(newPosition, newPosition);
+          messageRef.current.focus();
+        }
+        break;
+      }
+      case (e.ctrlKey || e.altKey) && e.code === 'ArrowUp': {
+        e.preventDefault();
+        if (messageRef && messageRef.current) {
+          // Move cursor to the start of the text
           messageRef.current.setSelectionRange(0, 0);
           messageRef.current.focus();
         }
         break;
       }
-      case e.altKey && (e.code === 'ArrowDown' || 'ArrowLeft'): {
+      case (e.ctrlKey || e.altKey) && e.code === 'ArrowDown': {
         e.preventDefault();
-        e.stopPropagation();
         if (messageRef && messageRef.current) {
-          const endlength = messageRef.current.value.length;
-          messageRef.current.setSelectionRange(endlength, endlength);
+          // Move cursor to the end of the text
+          const length = messageRef.current.value.length;
+          messageRef.current.setSelectionRange(length, length);
           messageRef.current.focus();
         }
         break;

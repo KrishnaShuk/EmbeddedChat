@@ -159,7 +159,7 @@ export const MessageToolbox = ({
         id: 'delete',
         onClick: () => setShowDeleteModal(true),
         iconName: 'trash',
-        visible: message.u._id === authenticatedUserId,
+        visible: true,
         type: 'destructive',
       },
       report: {

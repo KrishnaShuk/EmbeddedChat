@@ -454,15 +454,14 @@ const ChatInput = ({ scrollToBottom }) => {
         if (messageRef && messageRef.current) {
           const { value, selectionStart } = messageRef.current;
           let newPosition = selectionStart;
-          
-          // Find the start of the previous word
+
           while (newPosition > 0 && /\s/.test(value[newPosition - 1])) {
             newPosition--;
           }
           while (newPosition > 0 && !/\s/.test(value[newPosition - 1])) {
             newPosition--;
           }
-          
+
           messageRef.current.setSelectionRange(newPosition, newPosition);
           messageRef.current.focus();
         }
@@ -473,15 +472,14 @@ const ChatInput = ({ scrollToBottom }) => {
         if (messageRef && messageRef.current) {
           const { value, selectionEnd } = messageRef.current;
           let newPosition = selectionEnd;
-          
-          // Find the end of the next word
+
           while (newPosition < value.length && /\s/.test(value[newPosition])) {
             newPosition++;
           }
           while (newPosition < value.length && !/\s/.test(value[newPosition])) {
             newPosition++;
           }
-          
+
           messageRef.current.setSelectionRange(newPosition, newPosition);
           messageRef.current.focus();
         }

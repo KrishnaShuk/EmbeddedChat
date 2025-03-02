@@ -35,14 +35,7 @@ const Attachment = ({ attachment, host, type, variantStyles = {}, msg }) => {
     );
   }
   if (attachment && (attachment.image_url || attachment.title_link)) {
-    console.log('Attachment Data:', {
-      attachment,
-      host,
-      type,
-    });
-
     const url = attachment.image_url || attachment.title_link;
-    console.log('Processing URL:', url);
 
     const isGif =
       url &&
@@ -52,16 +45,12 @@ const Attachment = ({ attachment, host, type, variantStyles = {}, msg }) => {
         (attachment.description &&
           attachment.description.toLowerCase().includes('gif')));
 
-    console.log('Is GIF:', isGif);
-
     const imageUrl = url.startsWith('http') ? url : host + url;
-    console.log('Final Image URL:', imageUrl);
 
     if (url && url.includes('/file-upload/')) {
       const fullUrl = url.startsWith('http')
         ? url
         : `${host}/file-upload/${url.split('/file-upload/')[1]}`;
-      console.log('File Upload URL:', fullUrl);
 
       return (
         <ImageAttachment

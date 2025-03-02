@@ -20,13 +20,6 @@ const ImageAttachment = ({
   const [showGallery, setShowGallery] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-  console.log('ImageAttachment Render:', {
-    attachment,
-    host,
-    isGif,
-    imageUrl: attachment.image_url,
-  });
-
   const getUserAvatarUrl = (icon) => {
     const instanceHost = RCInstance.getHost();
     const URL = `${instanceHost}${icon}`;
@@ -138,13 +131,7 @@ const ImageAttachment = ({
             <img
               src={attachment.image_url}
               style={imageStyles({ isGif })}
-              onError={(e) => {
-                console.error('Image failed to load:', {
-                  src: e.target.src,
-                  isGif,
-                  error: e.target.error,
-                  originalUrl: attachment.image_url,
-                });
+              onError={() => {
                 setImageError(true);
               }}
               alt={attachment.description || 'Attached image'}

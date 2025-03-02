@@ -5,6 +5,7 @@ import { Box, Avatar, useTheme } from '@embeddedchat/ui-elements';
 import AttachmentMetadata from './AttachmentMetadata';
 import ImageGallery from '../ImageGallery/ImageGallery';
 import RCContext from '../../context/RCInstance';
+import { imageWrapper, imageStyles } from './ImageAttachment.styles';
 
 const ImageAttachment = ({
   attachment,
@@ -23,7 +24,7 @@ const ImageAttachment = ({
     attachment,
     host,
     isGif,
-    imageUrl: attachment.image_url
+    imageUrl: attachment.image_url,
   });
 
   const getUserAvatarUrl = (icon) => {
@@ -43,6 +44,20 @@ const ImageAttachment = ({
   const [isExpanded, setIsExpanded] = useState(true);
   const toggleExpanded = () => {
     setIsExpanded((prevState) => !prevState);
+  };
+
+  const handleImageClick = (e) => {
+    if (isGif) {
+      e.stopPropagation();
+      return;
+    }
+    setShowGallery(true);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      handleImageClick(e);
+    }
   };
 
   return (
@@ -83,9 +98,7 @@ const ImageAttachment = ({
               <Box>@{authorName}</Box>
             </Box>
           </>
-        ) : (
-          ''
-        )}
+        ) : null}
         <Box
           css={css`
             align-items: center;
@@ -104,60 +117,63 @@ const ImageAttachment = ({
           />
         </Box>
         {isExpanded && (
-          <Box 
-            onClick={() => !isGif && setShowGallery(true)}
-            css={css`
-              width: ${isGif ? '200px' : '300px'};
-              height: ${isGif ? '200px' : 'auto'};
-              overflow: hidden;
-              border-radius: inherit;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              background-color: ${theme.colors.surface};
-            `}
+          <button
+            type="button"
+            onClick={handleImageClick}
+            onKeyPress={handleKeyPress}
+            css={[
+              imageWrapper({ isGif, theme }),
+              css`
+                border: none;
+                background: none;
+                padding: 0;
+                cursor: ${!isGif ? 'pointer' : 'default'};
+                &:focus {
+                  outline: 2px solid ${theme.colors.primary};
+                  outline-offset: 2px;
+                }
+              `,
+            ]}
           >
             <img
-              src={attachment.image_url} // URL is now fully formed from Attachment component
-              style={{
-                width: isGif ? '200px' : '100%',
-                height: isGif ? '200px' : 'auto',
-                maxHeight: isGif ? '200px' : '200px',
-                objectFit: isGif ? 'cover' : 'scale-down',
-                borderRadius: 'inherit',
-                imageRendering: isGif ? 'auto' : 'inherit',
-              }}
+              src={attachment.image_url}
+              style={imageStyles({ isGif })}
               onError={(e) => {
                 console.error('Image failed to load:', {
                   src: e.target.src,
                   isGif,
                   error: e.target.error,
-                  originalUrl: attachment.image_url
+                  originalUrl: attachment.image_url,
                 });
                 setImageError(true);
               }}
-              onClick={(e) => {
-                if (isGif) {
-                  e.stopPropagation();
-                }
-              }}
+              alt={attachment.description || 'Attached image'}
             />
             {imageError && (
-              <Box css={css`
-                color: ${theme.colors.danger};
-                padding: 8px;
-                font-size: 12px;
-              `}>
+              <Box
+                css={css`
+                  color: ${theme.colors.danger};
+                  padding: 8px;
+                  font-size: 12px;
+                `}
+              >
                 Failed to load image. URL: {host + attachment.image_url}
               </Box>
             )}
-          </Box>
+          </button>
         )}
         {attachment.attachments &&
           attachment.attachments.map((nestedAttachment, index) => (
             <Box css={variantStyles.imageAttachmentContainer} key={index}>
               <Box
+                role="button"
+                tabIndex={0}
                 onClick={() => setShowGallery(true)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    setShowGallery(true);
+                  }
+                }}
                 css={[
                   css`
                     cursor: pointer;
@@ -195,9 +211,7 @@ const ImageAttachment = ({
                       <Box>@{nestedAttachment.author_name}</Box>
                     </Box>
                   </>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 <AttachmentMetadata
                   attachment={nestedAttachment}
                   url={
@@ -214,6 +228,9 @@ const ImageAttachment = ({
                     borderBottomLeftRadius: 'inherit',
                     borderBottomRightRadius: 'inherit',
                   }}
+                  alt={
+                    nestedAttachment.description || 'Nested attachment image'
+                  }
                 />
               </Box>
               {showGallery && (

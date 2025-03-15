@@ -48,9 +48,7 @@ const Attachment = ({ attachment, host, type, variantStyles = {}, msg }) => {
     const imageUrl = url.startsWith('http') ? url : host + url;
 
     if (url && url.includes('/file-upload/')) {
-      const fullUrl = url.startsWith('http')
-        ? url
-        : `${host}/file-upload/${url.split('/file-upload/')[1]}`;
+      const fullUrl = `${host}/file-upload/${url.split('/file-upload/')[1]}`;
 
       return (
         <ImageAttachment

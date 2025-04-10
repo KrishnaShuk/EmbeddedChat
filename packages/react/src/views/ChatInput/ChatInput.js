@@ -456,10 +456,10 @@ const ChatInput = ({ scrollToBottom }) => {
           let newPosition = selectionStart;
 
           while (newPosition > 0 && /\s/.test(value[newPosition - 1])) {
-            newPosition--;
+            newPosition -= 1;
           }
           while (newPosition > 0 && !/\s/.test(value[newPosition - 1])) {
-            newPosition--;
+            newPosition -= 1;
           }
 
           messageRef.current.setSelectionRange(newPosition, newPosition);
@@ -474,10 +474,10 @@ const ChatInput = ({ scrollToBottom }) => {
           let newPosition = selectionEnd;
 
           while (newPosition < value.length && /\s/.test(value[newPosition])) {
-            newPosition++;
+            newPosition += 1;
           }
           while (newPosition < value.length && !/\s/.test(value[newPosition])) {
-            newPosition++;
+            newPosition += 1;
           }
 
           messageRef.current.setSelectionRange(newPosition, newPosition);
@@ -488,7 +488,6 @@ const ChatInput = ({ scrollToBottom }) => {
       case (e.ctrlKey || e.altKey) && e.code === 'ArrowUp': {
         e.preventDefault();
         if (messageRef && messageRef.current) {
-          // Move cursor to the start of the text
           messageRef.current.setSelectionRange(0, 0);
           messageRef.current.focus();
         }
@@ -497,8 +496,9 @@ const ChatInput = ({ scrollToBottom }) => {
       case (e.ctrlKey || e.altKey) && e.code === 'ArrowDown': {
         e.preventDefault();
         if (messageRef && messageRef.current) {
-          // Move cursor to the end of the text
-          const length = messageRef.current.value.length;
+          const { current } = messageRef;
+          const { value } = current;
+          const { length } = value;
           messageRef.current.setSelectionRange(length, length);
           messageRef.current.focus();
         }
